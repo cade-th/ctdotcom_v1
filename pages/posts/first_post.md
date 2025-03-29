@@ -1,28 +1,26 @@
 ---
-title: A Tourists Guide to C++ Interpreters, Part I
+title: A Tourists Guide to C++ Interpreters Part I
 date: 2025-03-29
 description: Making an interpreter in C++
 tag: C++
 author: Cade Thornton
 ---
 
-# Interpreters!
-
 Recently, I had the pleasure of seeing a great movie called "The Menu". A fascinating blend of thrill/suspense, satire, and philosophy, this film was well worth its hour and a half-ish runtime
 
-![TheMenu](./theMenu.jpeg)
+![TheMenu](../../resources/theMenu.jpeg)
 
 Without revealing too much of the movie's plot, the story is centered around a ravish dining experience led by an imposing head chef and his legion of cooks who serve an array of pompous upper-class guests who don't care too much for their food (except only to criticize it whenever possible).
 One of the story's main characters, Tyler, is a walking Dunning-Kruger of a man played by Nicholus Hoult
 
-![Nicholas](./nicholas.jpeg)
+![Nicholas](../../resources/nicholas.jpeg)
 
 Tyler, unlike the other guests, has an extreme and sometimes violent reverence for the chef and his restaurant. He frequently describes every ingredient and aroma of his food in shakespearean terms and makes it a point to show the chef his enormous amount of knowledge of their menu and of food/cooking in general.  
 
 Throughout the film's runtime, the chef pretends to be flattered by Tyler's frequent "pick me" moments and repeated attempts at impressing him. However, in a climatic turn of events, the chef instructs Tyler to come to the open-air kitchen in front of all the guests and put on a chef's apron. Tyler obliges, his enthusiasm still sky-high but a little shake in his seemingly unbreakable confidence now becoming visible. With Tyler clearly having everything he could possibly need to cook literally any dish ever, the Chef then gives Tyler a very simple directive:
 
 
-![Cook](./cook.jpeg)
+![Cook](../../resources/cook.jpeg)
 
 *"Cook."*
 
@@ -30,7 +28,7 @@ Tyler freezes for a second, trying to reboot his brain's suddenly over-burdened 
 
 This culminates in his dish's name aptly titled below:
 
-![Tylers](./tyler's.jpeg)
+![Tylers](../../resources/tyler's.jpeg)
 
 Many a time, I will be sitting at my desk and a sudden wave of imposter syndrome will tumble over me like a suprise tsunami:
 

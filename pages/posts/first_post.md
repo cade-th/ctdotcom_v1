@@ -107,7 +107,108 @@ int main(int argc, char* argv[]) {
 ```
 
 There. Instead of printing a string to the console, our program now prints to the console whatever you enter as a command line argument.
-But what we have here is really still about equivalent to Tyler's Bullshit, so let's take it the next logical step up and add what everyone who doesn't go outside much loves: a shell.
+But what we have here is really still about equivalent to Tyler's Bullshit, so how could we take this further?
+
+Well, usually at this point, a lot of people start writing graphics engines with something like SDL or raylib because some visual output is a much more appealing sign of progress than printing stuff.
+
+Something like in what youtuber JDH makes (far and away my favorite youtuber of all time)
+![jdh](../../resources/jdh.jpeg)
+
+That can certainly last you a long time, but game/graphics programming tends be a far-cry from the tasks you'd normally get in the software industry, therefore, for our "Code." approach, we'll stick to some kind of CLI program.
+The next logical evolution taught in most CS courses would be a REPL (read, execute, print, loop) program where the user has some kind of prompt, the program reads data from the user, and the program executes something based off that data. This will normally get you fun text-based adventure games like my absolute favorite [A Dark Room](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://adarkroom.doublespeakgames.com/&ved=2ahUKEwi2yrvZv7CMAxWiLtAFHch_AWoQFnoECAoQAQ&usg=AOvVaw0BNnJzQXsfTgf3psPTQY_z)
+
+But even that won't use many programming concepts for long. What we really need is a CLI program that we could write from the bottom up, on the spot, that encapsulates a number of programming concepts while also being something you see at any standard software company. 
+
+I would argue an interpreter is ***exactly*** that.
+
+If someone told me "Code." I would write an interpreter.
+
+Before we do that, I'm going begrudgingly take a java-esc approach to this project because for some reason I was told semi-recently that I don't know what object-oriented programming is, so hopefully this will remedy that.
+Let's change our CLI program into one giant object, but no fancy object graphs or dependency injection yet:
+
+```
+#include "cade_lang.h"
+
+int main(int argc, char *argv[]) {
+        Cade_Lang cade_lang(argc, argv);
+        return 0;
+}
+
+```
+
+Cade_Lang (the very original name of my interpreter) will take the two command line arguments in its constructor. Here will declare some of its members and process the arguments:
+```
+class Cade_Lang {
+        public:
+                Cade_Lang(int argc, char *argv[]);
+        private:
+                int argc;
+                std::vector<std::string> args;
+```
+
+This object will act similarly to something like sqlite, where its behavior will depend on whether the user wants a shell or to run the program from a file, as shown by the overloaded run() function.
+We will do this in Cade_Lang's constructor:
+
+```
+Cade_Lang::Cade_Lang(int argc, char *argv[]) {
+        this->argc = argc;
+        for (int i=0; i < argc; i++) {
+                args.push_back(argv[i]);
+        }
+
+        switch(argc) {
+                case 1:
+                        std::cout << "Usage: Cade_Lang [script]" << "\n";
+                        exit(1);
+                        break;
+                case 2:
+                        run_file(args[1]);
+                        break;
+                default:
+                        run_shell();
+                        break;
+        }
+}
+```
+
+Now, we can proceed to make what every person who doesn't go outside much loves: a shell.
+
+run_file and run_shell are member functions that will call some standard library functions for user input and then call a run() function where we will do the meat of the interpreter.
+
+But to get a basic shell going, we can do run_shell() like this:
+
+```
+void Cade_Lang::run_shell() {
+
+        bool is_running = true;
+
+        std::string input;
+
+        while(is_running) {
+                std::cout << "cade_lang> ";
+
+                std::getline(std::cin,input);
+
+                if(input.empty()) continue;
+                if(input == ".quit") is_running = false;
+
+                run(input);
+        }
+}
+```
+
+Here we do an infinite loop where we print the shell prompt and get whatever the user puts, while allowing the user to do the sqlite-esc .quit command to break the loop.
+And with that, we have a shell just like you'd see in bash or in sqlite:
+
+```
+cade_lang>
+```
+
+Our shell can't do anything besides quit for now, but we'll do the next step in making an interpreter by splitting up the inputted string into ***tokens*** that we can then parse it with some sort of binary tree in order to do meaningful, grammatical things
+
+Check that out in Part 2 to be written
+
+
 
 
 

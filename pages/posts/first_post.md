@@ -136,7 +136,7 @@ int main(int argc, char *argv[]) {
 
 ```
 
-Cade_Lang (the very original name of my interpreter) will take the two command line arguments in its constructor. Here will declare some of its members and process the arguments:
+Cade_Lang (the very original name of my interpreter) will take the two command line arguments in its constructor. Here we will declare some of its members and process the arguments:
 ```
 class Cade_Lang {
         public:
@@ -146,7 +146,7 @@ class Cade_Lang {
                 std::vector<std::string> args;
 ```
 
-This object will act similarly to something like sqlite, where its behavior will depend on whether the user wants a shell or to run the program from a file, as shown by the overloaded run() function.
+Cade_Lang will act similarly to something like sqlite, where its behavior will depend on whether the user wants a shell or to run the program from a file.
 We will do this in Cade_Lang's constructor:
 
 ```
@@ -206,7 +206,7 @@ cade_lang>
 
 Our shell can't do anything besides quit for now, but we'll do the next step in making an interpreter by splitting up the inputted string into ***tokens*** that we can then parse it with some sort of binary tree in order to do meaningful, grammatical things
 
-Check that out in Part 2 to be written
+Check that out in Part 2 coming soon!
 
 
 

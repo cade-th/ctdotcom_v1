@@ -90,7 +90,7 @@ int main() {
 }
 ```
 
-After, of course, undergoing the hideous nightmare of setting up C/C++ build systems and reading an entire goddamn book about CMake so I can write code for my fucking meta-build system to generate my make-based build system that generates my final shit-based build system that runs shell commands that call Clang or gcc in whatever way with which monopolistic hardware vendors want to slam unsuspecting victims with patent trolls so that not even the biggest company in the world can build a cellular modem - wait, what was I talking about again?
+After, of course, undergoing the hideous nightmare of setting up C/C++ build systems and reading an entire book about CMake so I can write code for my meta-build system to generate my make-based build system that generates my final build system that runs shell commands that call Clang or gcc in whatever way with which monopolistic hardware vendors want to slam unsuspecting victims with patent trolls so that not even the biggest company in the world can build a cellular modem - wait, what was I talking about again?
 
 A tourist's guide to Interpreters in C++, ah.
 

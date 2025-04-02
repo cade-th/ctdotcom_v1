@@ -4,16 +4,25 @@
         <description><![CDATA[Cade Thornton]]></description>
         <link>https://cadethornton.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Sun, 30 Mar 2025 00:48:36 GMT</lastBuildDate>
+        <lastBuildDate>Wed, 02 Apr 2025 02:00:04 GMT</lastBuildDate>
         <atom:link href="https://cadethornton.com" rel="self" type="application/rss+xml"/>
         <item>
             <title><![CDATA[A Bluetooth Keyboard, How and Why Part I]]></title>
             <description><![CDATA[Making a bluetooth keyboard from the ground up]]></description>
             <link>/posts/ble_keyboard_p1</link>
             <guid isPermaLink="true">/posts/ble_keyboard_p1</guid>
-            <category><![CDATA[Bluetooh]]></category>
+            <category><![CDATA[Bluetooth]]></category>
             <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
             <pubDate>Mon, 17 Mar 2025 00:00:00 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[A Bluetooth Keyboard, Part II]]></title>
+            <description><![CDATA[Making a bluetooth keyboard from the ground up]]></description>
+            <link>/posts/ble_keyboard_p2</link>
+            <guid isPermaLink="true">/posts/ble_keyboard_p2</guid>
+            <category><![CDATA[Bluetooth]]></category>
+            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
+            <pubDate>Tue, 01 Apr 2025 00:00:00 GMT</pubDate>
         </item>
         <item>
             <title><![CDATA[A Tourist's Guide to C++ Interpreters Part I]]></title>
@@ -23,6 +32,24 @@
             <category><![CDATA[C++]]></category>
             <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
             <pubDate>Sat, 29 Mar 2025 00:00:00 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[A Tourist's Guide to Interpreters Part II]]></title>
+            <description><![CDATA[Making an interpreter in C++]]></description>
+            <link>/posts/interpreters_p2</link>
+            <guid isPermaLink="true">/posts/interpreters_p2</guid>
+            <category><![CDATA[C++]]></category>
+            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
+            <pubDate>Fri, 28 Mar 2025 00:00:00 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[UART/I2C/SPI in HDL Part I]]></title>
+            <description><![CDATA[Implementing serial protocols in system verilog]]></description>
+            <link>/posts/system_verilog_p1</link>
+            <guid isPermaLink="true">/posts/system_verilog_p1</guid>
+            <category><![CDATA[HDL]]></category>
+            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
+            <pubDate>Tue, 01 Apr 2025 00:00:00 GMT</pubDate>
         </item>
     </channel>
 </rss>

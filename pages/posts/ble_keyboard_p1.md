@@ -63,5 +63,5 @@ Once we've got our development board blinking an LED, we can then cut-open a USB
 
 With a couple characters appearing in bash from the nrf52840, that would conclude our breadboarding, as bluetooth will just be working with the SOC. We can then move on to making the printed circuit board, which we will do with KiCad because I don't have an altium license. After finding some suitable footprints and chomping away at a good PCB layout, we can have the board manufactured and solder up the design with some buttons. Viola: Bluetooth keyboard. After that, we could probably use another CAD software to 3D print an enclosure, but now we're getting ahead of ourselves. 
 
-We'll get started with Zephyr in part II
+We'll get started with Zephyr in [part 2](cadethornton.com/posts/ble_keyboard_p2)
 

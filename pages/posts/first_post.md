@@ -206,9 +206,8 @@ cade_lang>
 
 Our shell can't do anything besides quit for now, but we'll do the next step in making an interpreter by splitting up the inputted string into ***tokens*** that we can then parse it with some sort of binary tree in order to do meaningful, grammatical things
 
-Check that out in Part 2 coming soon!
 
-
+[Check out part 2 here](cadethornton.com/posts/interpreters_p2)
 
 
 

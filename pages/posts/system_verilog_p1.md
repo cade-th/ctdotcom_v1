@@ -6,5 +6,8 @@ tag: HDL
 author: Cade Thornton
 ---
 
-This is the only post that I haven't finished yet
+## The Joy that is Hardware Description Languages
+
+
+
 

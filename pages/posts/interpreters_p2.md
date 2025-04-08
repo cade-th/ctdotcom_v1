@@ -37,7 +37,7 @@ We'll add a tokenize() function to our Cade_Lang class that will take a string a
 ```
 std::vector<Token> Cade_Lang::tokenize(std::string input);
 ```
-There is a pretty simple approach for this by just separating tokens by whitespace, which we will do by converting the input string to a stream that we can than use the " >> " operator to iterate by detected whitespace like so:
+There is a pretty simple approach for this by just separating tokens by whitespace, which we will do by converting the input string to a stream that we can than use the overloaded " >> " operator to iterate by detected whitespace like so:
 
 ```
 std::vector<Token> Cade_Lang::tokenize(std::string input) {
@@ -51,6 +51,34 @@ std::vector<Token> Cade_Lang::tokenize(std::string input) {
     }
 
     return tokens;
+}
+```
+
+However, this approach doesn't particularly translate well to other languages, so I will go with a more unsafe, C-like approach by looping through the string and looking for space characters manually:
+
+```
+std::vector<Token> Cade_Lang::tokenize(std::string input) {
+        std::vector<Token> tokens;
+        std::string buffer;
+
+        // Loop through the entire string character by character
+        for (int i=0; i < input.size();i++) {
+                // look for a space
+                if (input[i] != ' ') {
+                        buffer.push_back(input[i]);
+                // omit multiple spaces
+                } else if (!buffer.empty()) {
+                        Token temp(buffer);
+                        tokens.push_back(temp);
+                        buffer.clear();
+                }
+        }
+        // Catch the last token if the input doesn't end in a space since we don't have a string delimter for cpp strings
+        if (!buffer.empty()) {
+                Token temp(buffer);
+                tokens.push_back(temp);
+        }
+        return tokens;
 }
 ```
 
@@ -122,8 +150,10 @@ Running main() from ./googletest/src/gtest_main.cc
 
 ```
 
-Continuing...
+Now that we have a kind of primative tokenizer, we can move on to created a big pattern matching loop to convert each of these base tokens into their specific grammatical token, or in other words, parse them.
 
+
+... [part 3](cadethornton.com/posts/interpreters_p3)
 
 
 

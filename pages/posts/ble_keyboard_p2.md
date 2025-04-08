@@ -90,5 +90,42 @@ There we go! A minimal Zephyr setup and an LED blinked. This kind of developer-f
 
 But I digress. Now, we will set up our source code and begin getting a "hello world" example running... on USB!
 
+First, let's think about how we will construct out program. Because we'll be using bluetooth and USB, we can make the highest layer a simple state change between either of those in the main functionvia a basic hardware interrupt with a button. Without using any of the zephyr specific macros/apis, it will look a little like this:
+
+```
+#include <zephyr/kernel.h>
+
+void run_bluetooth() {
+
+}
+
+void run_usb() {
+
+}
+
+// Initialize usb for power
+void init() {
+
+}
+
+
+void mode_change_ISR(const void *arg) {
+        printk("something worked\n");
+}
+
+int main(void) {
+        int mode = 0;
+        init();
+        if (!mode) {
+                run_bluetooth();
+        }
+        else {
+                run_usb();
+        }
+        return 0;
+}
+
+```
+
 
 

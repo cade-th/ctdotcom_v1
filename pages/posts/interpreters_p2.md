@@ -1,159 +1,137 @@
 ---
-title: A Tourist's Guide to Interpreters Part II
-date: 2025-03-28
+title: A Tourist's Guide to Interpreters Part II, Dynamic Arrays & Lexer
+date: 2025-05-22
 description: Making an interpreter in C++
 tag: C++
 author: Cade Thornton
 ---
 
-Our problem has been simplified now into parsing a single string that represents either a file or the user's shell input. We will tackle this by create a new class a token in Cade_Lang.h:
+### 
+
+One reason interpreters are great is because of test-driven development. TTD was something I never really got into during my degree or in my free time because things like graphics engines or many university projects don't really lend themselves towards the paradigm. However, an interpreter is ideally 100% deterministic, so TTD is *the best* place to both learn and demonstrate the approach. 
+
+I'll begin by doing something I don't really see very often with programming projects, which is write a failing test that covers literally the entirety of our project. It'll be mostly pseudocode for now for reason's I'll explain in a second:
+(I'm also using the Unity C testing framework, a very nice library consiting of just a single .c and header file that gives us some nice macros printing info about the tests)
+```
+void test_interpreter(void) {
+        char *input = "1 + 1 * 2;"; 
+        Lexer lexer = lexer_new(input);
+        Tokens tokens[] = lex(&lexer);
+
+        Parser parser = parser_new(tokens);
+        AST tree = parse(&parser);
+
+        char *output = evaluate(tree);
+        assert(output, "4");
+}
+
+int main(void) {
+        UNITY_BEGIN();
+        RUN_TEST(test_interpreter):
+        return UNITY_END();
+}
+```
+
+So, our interpreter's structure is essentially exactly how this test function reads: we get the user input as a string from the shell/file (done in part 1), feed this into the lexer that outputs an array of tokens, feed that array into the parser which then builds a tree that we evaluate into something like an interger. Pretty simple. We're just doing basic arithmetic because this test serves to only illustrate the interpreter architecture. Further tests for the lexer/parser/evaluator will be more feature rich and specific.
+
+At first glance, it seems we could move on now to constructing our lexer and trying to get some tokens made, but C is a what I call a fun langauge. 
+
+This does not work:
+```
+Tokens tokens[] = lex(&lexer);
+```
+
+For a couple reasons. In C, functions cannot return simple arrays, the size of an array most be known at compile time, and C does not have a type for types (i.e. generics) that we would need for our tokens to be returned from the lexer. Darn. Therefore, before we can create our black box for our lexer, we will first need to solve the quinessential problem of C that turns away so many people from the language: creating generic dynamic arrays.
+
+A dynamic array, in our case, will just be a generic heap-based array with no fixed size. This usually looks like a vector in C++:
+```
+std::vector<Token>
+```
+
+But we don't have the nice generic type syntax of C++, so we'll need to use macros because type checking and debugging are for the weak. Basically, we just pass the argument of the macro to the constructor of the array through sizeof(), malloc it in dyn_array_init(), and cast the return pointer to the type we passed to the macro like so:
+```
+#define DYN_ARRAY(T) (T *)dyn_array_init(sizeof(T), INITIAL_CAPACITY);
+```
+
+dyn_array_init() will return something a little funky. In a lot of typical dynamic data structures in c, they begin with a struct defining the layout kind of like this:
+```
+typedef struct {
+        int length;
+        int capacity;
+} Dyn_Array;
+```
+
+And this works fine for a lot of things, but a better way I found via [Dylan Falconer](https://www.bytesbeneath.com/p/dynamic-arrays-in-c) is to have the struct simply be a set of metadata (or a header, in other words) that takes up the first few bytes in the beginning of the dynamically allocated structure like this:
+```
+typedef struct {
+        int length;
+        int capacity;
+} Dyn_Array_Header;
+```
+
+So just a name change. The init function calculates the initial size of the array plus the metadata/header to malloc(), then returns a pointer that is incremented past the metadata in order to start at the first index of the array:
 
 ```
-class Token {
-        public:
-                Token();
-        private:
-                std::string data;
-};
-```
-With this setup, we can actually start to incorporate some object-oriented features into our program as we will have different token types that will inherit from the base token class and also overload its functions. There will just be these examples for now:
+void *dyn_array_init(int item_size, int capacity, Allocator *a) {
+    void *ptr = 0;
+    int size = item_size * capacity + sizeof(Array_Header);
+    Array_Header *h = malloc(size);
 
-```
-class Operator : Token {
-        public:
-                Operator();
-        private:
-};
-
-class Label : Token {
-        public:
-                Label();
-        private:
-};
-```
-
-We'll add a tokenize() function to our Cade_Lang class that will take a string and output a dynamic array of tokens:
-
-```
-std::vector<Token> Cade_Lang::tokenize(std::string input);
-```
-There is a pretty simple approach for this by just separating tokens by whitespace, which we will do by converting the input string to a stream that we can than use the overloaded " >> " operator to iterate by detected whitespace like so:
-
-```
-std::vector<Token> Cade_Lang::tokenize(std::string input) {
-    std::vector<Token> tokens;
-    std::stringstream ss(input);
-    std::string buffer;
-
-    while (ss >> buffer) {
-        Token temp(buffer);
-        tokens.push_back(temp);
+    if(h) {
+        h->capacity = capacity;
+        h->length = 0;
+        ptr = h + 1;
     }
 
-    return tokens;
+    return ptr;
 }
 ```
 
-However, this approach doesn't particularly translate well to other languages, so I will go with a more unsafe, C-like approach by looping through the string and looking for space characters manually:
-
+Theoretically, we now have a generic, heap allocated dynamic array. A simple push() and index_at() function will be enough for our lexer, but push() introduces another classic problem: ensuring the capacity of the array, and adjusting the capacity accordingly. Push() will need to be a macro as well because we're still dealing with generic types here:
 ```
-std::vector<Token> Cade_Lang::tokenize(std::string input) {
-        std::vector<Token> tokens;
-        std::string buffer;
+#define ARRAY_PUSH(a,v) ( \
+        (a) = array_ensure_capacity(a,1,sizeof(v)), \
+        (a) = [array_header(a)->length] = (v), \
+        &(a) = [array_header(a)->length++])
 
-        // Loop through the entire string character by character
-        for (int i=0; i < input.size();i++) {
-                // look for a space
-                if (input[i] != ' ') {
-                        buffer.push_back(input[i]);
-                // omit multiple spaces
-                } else if (!buffer.empty()) {
-                        Token temp(buffer);
-                        tokens.push_back(temp);
-                        buffer.clear();
-                }
-        }
-        // Catch the last token if the input doesn't end in a space since we don't have a string delimter for cpp strings
-        if (!buffer.empty()) {
-                Token temp(buffer);
-                tokens.push_back(temp);
-        }
-        return tokens;
-}
+#define array_header(a) ((Array_Header *)(a) - 1)
+#define array_length(a) (array_header(a)->length)
+#define array_capacity(a) (array_header(a)->capacity)
 ```
 
-It has dawned on me that I have not included tests up until this point, and interpreters are an excellent use case for test-driven development because they ought to be as deterministic as possible. Therefore, we will also setup a test suite using Google Test (which seems to be the most popular cpp testing framework). This adds a bunch more pain to our CMakeLists.txt, and we'll need to add some static libraries to /usr/lib because gtest doesn't come prebuilt with debian's package manager
+ensure_capacity() is a bit of a gnarly function that I won't go into depth here, but it's really a new malloc() and a memcpy depending on if the array header indicates the size is too large. With that, we now have a dynamic, generic array in C with elements accessible via the "[]" syntax (which is syntactic sugar for *(array + index) or incrementing and dereferencing the array pointer
 
-We can set up some simple tests using a Test Fixture because our entire program is one object so we'll need some state in between tests:
+NOW we can begin our lexer. 
+```
+typedef enum {
+        INT, 
+        PLUS,
+        ASTERISK,
+        LET,
+        SEMICOLON,
+        ASSIGN,
+        IDENT,
+        ILLEGAL
+} Token_t;
 
-``` 
-// Cade_Lang_Test.cpp
-class CadeLangTestFixture : public ::testing::Test {
-protected:
-    Cade_Lang* cade_lang = nullptr;
-    std::vector<char*> argv;
-    int argc;
+typedef struct {
+        Token_t type;
+        char *literal;
+} Token;
 
-    void SetUp() override {
-        argc = 2;
-        // Without these strdup the compiler complains
-        argv = {strdup("Cade_Lang"), strdup("../tests/test_file.txt")};
-        cade_lang = new Cade_Lang(argc, argv.data());
-    }
-
-    void TearDown() override {
-        delete cade_lang;
-        cade_lang = nullptr;
-        for (char* arg : argv) {
-            free(arg);
-        }
-    }
-};
-
-TEST_F(CadeLangTestFixture, num_token_test) {
-        std::string test_string = "hello world";
-        std::vector<Token> tokens = cade_lang->tokenize(test_string);
-        int num_tokens = tokens.size();
-        int num_tokens_expected = 2;
-        EXPECT_EQ(num_tokens, num_tokens_expected);
-}
-
-TEST_F(CadeLangTestFixture, num_token_test_2) {
-        std::string test_string = "hello world this should be longer";
-        std::vector<Token> tokens = cade_lang->tokenize(test_string);
-        int num_tokens = tokens.size();
-        int num_tokens_expected = 6;
-        EXPECT_EQ(num_tokens, num_tokens_expected);
-}
+typedef struct {
+        char *input;
+        int position,
+        int read_position,
+        char *ch;
+} Lexer;
 ```
 
-And with that, we have some passing tests with just a whitespace delimiter (I've added more tests, like for multiple spaces etc. but I don't want to clog up this page with them:
 
-```
-Running main() from ./googletest/src/gtest_main.cc
-[==========] Running 4 tests from 1 test suite.
-[----------] Global test environment set-up.
-[----------] 4 tests from CadeLangTestFixture
-[ RUN      ] CadeLangTestFixture.num_token_test
-[       OK ] CadeLangTestFixture.num_token_test (0 ms)
-[ RUN      ] CadeLangTestFixture.num_token_test_2
-[       OK ] CadeLangTestFixture.num_token_test_2 (0 ms)
-[ RUN      ] CadeLangTestFixture.num_token_test_3
-[       OK ] CadeLangTestFixture.num_token_test_3 (0 ms)
-[ RUN      ] CadeLangTestFixture.num_token_test_spaces
-[       OK ] CadeLangTestFixture.num_token_test_spaces (0 ms)
-[----------] 4 tests from CadeLangTestFixture (0 ms total)
 
-[----------] Global test environment tear-down
-[==========] 4 tests from 1 test suite ran. (0 ms total)
-[  PASSED  ] 4 tests.
-
-```
-
-Now that we have a kind of primative tokenizer, we can move on to created a big pattern matching loop to convert each of these base tokens into their specific grammatical token, or in other words, parse them.
 
 
 ... [part 3](cadethornton.com/posts/interpreters_p3)
-
+[Repository for this project](https://github.com/cade-th/interpreter_c)
 
 

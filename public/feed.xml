@@ -4,26 +4,8 @@
         <description><![CDATA[Cade Thornton]]></description>
         <link>https://cadethornton.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Tue, 08 Apr 2025 15:05:04 GMT</lastBuildDate>
+        <lastBuildDate>Fri, 23 May 2025 00:24:54 GMT</lastBuildDate>
         <atom:link href="https://cadethornton.com" rel="self" type="application/rss+xml"/>
-        <item>
-            <title><![CDATA[A Tourist's Guide to Interpreters Part II]]></title>
-            <description><![CDATA[Making an interpreter in C++]]></description>
-            <link>/posts/interpreters_p2</link>
-            <guid isPermaLink="true">/posts/interpreters_p2</guid>
-            <category><![CDATA[C++]]></category>
-            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
-            <pubDate>Fri, 28 Mar 2025 00:00:00 GMT</pubDate>
-        </item>
-        <item>
-            <title><![CDATA[A Tourist's Guide to C++ Interpreters Part I]]></title>
-            <description><![CDATA[Making an interpreter in C++]]></description>
-            <link>/posts/first_post</link>
-            <guid isPermaLink="true">/posts/first_post</guid>
-            <category><![CDATA[C++]]></category>
-            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
-            <pubDate>Sat, 29 Mar 2025 00:00:00 GMT</pubDate>
-        </item>
         <item>
             <title><![CDATA[A Bluetooth Keyboard, How and Why Part I]]></title>
             <description><![CDATA[Making a bluetooth keyboard from the ground up]]></description>
@@ -43,6 +25,15 @@
             <pubDate>Tue, 01 Apr 2025 00:00:00 GMT</pubDate>
         </item>
         <item>
+            <title><![CDATA[A Tourist's Guide to C Interpreters Part I]]></title>
+            <description><![CDATA[Making an interpreter in C]]></description>
+            <link>/posts/first_post</link>
+            <guid isPermaLink="true">/posts/first_post</guid>
+            <category><![CDATA[C]]></category>
+            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
+            <pubDate>Sat, 29 Mar 2025 00:00:00 GMT</pubDate>
+        </item>
+        <item>
             <title><![CDATA[Making an Entire Linux Distro Part 1]]></title>
             <description><![CDATA[Building an entire linux distribution in shell scripts]]></description>
             <link>/posts/linux_distro</link>
@@ -50,6 +41,15 @@
             <category><![CDATA[Linux]]></category>
             <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
             <pubDate>Sun, 06 Apr 2025 00:00:00 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[A Tourist's Guide to Interpreters Part II, Dynamic Arrays & Lexer]]></title>
+            <description><![CDATA[Making an interpreter in C++]]></description>
+            <link>/posts/interpreters_p2</link>
+            <guid isPermaLink="true">/posts/interpreters_p2</guid>
+            <category><![CDATA[C++]]></category>
+            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
+            <pubDate>Thu, 22 May 2025 00:00:00 GMT</pubDate>
         </item>
         <item>
             <title><![CDATA[UART/I2C/SPI in HDL Part I]]></title>

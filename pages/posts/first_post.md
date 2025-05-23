@@ -1,10 +1,12 @@
 ---
-title: A Tourist's Guide to C++ Interpreters Part I
+title: A Tourist's Guide to C Interpreters Part I
 date: 2025-03-29
-description: Making an interpreter in C++
-tag: C++
+description: Making an interpreter in C
+tag: C
 author: Cade Thornton
 ---
+
+[Repository for this project](https://github.com/cade-th/interpreter_c)
 
 Recently, I had the pleasure of seeing a great movie called "The Menu". A fascinating blend of thrill/suspense, satire, and philosophy, this film was well worth its hour and a half-ish runtime
 
@@ -65,7 +67,7 @@ public class HelloWorld {
 }
 ```
 
-Nothing says programming is fun like forcing your student's to learn 9 different keywords and basic OOP and type theory *JUST* to do what is literally this in python:
+Nothing says programming is fun like forcing your student's to learn 9 different keywords and basic OOP and many java-specific types *JUST* to do what is literally this in python:
 
 ```
 print("hello world");
@@ -79,30 +81,55 @@ and this in C:
   }
 ```
 
-Tangents about computer science education aside, if told to "Code." I would start with the standard c++ hello world:
+Tangents about computer science education aside, if told to "Code." I would start with the standard C "hello world". After, of course, undergoing the hideous nightmare of setting up C/C++ build systems and reading an entire book about CMake so I can write code for my meta-build system to generate my make-based build system that generates my final, insanity-based build system that runs shell commands that call Clang or gcc in whatever way with which monopolistic hardware vendors want to slam unsuspecting victims with patent trolls so that not even the biggest company in the world can build a cellular modem - wait, what was I talking about again?
 
-``` 
-#include <iostream>
+A tourist's guide to Interpreters in C, ah.
 
-int main() {
-  std::cout << "Hello, World!" << std::endl; 
-  return 0;
+This C program obviously doesn't do much and would only impress your local bean-counter, so let's improve it by doing the next logical step up: a simple command line program.
+
+A tip I picked up from The Rust Book is to create and parse a config struct for the programs command-line arguments like below, and abstract the programs main functionality into a separate function:
+
+```
+#include <stdio.h>
+
+void main(int argc, char* argv[]) {
+       Config config = config_build(argc,argv);
+       run(config);
 }
 ```
 
-After, of course, undergoing the hideous nightmare of setting up C/C++ build systems and reading an entire book about CMake so I can write code for my meta-build system to generate my make-based build system that generates my final build system that runs shell commands that call Clang or gcc in whatever way with which monopolistic hardware vendors want to slam unsuspecting victims with patent trolls so that not even the biggest company in the world can build a cellular modem - wait, what was I talking about again?
-
-A tourist's guide to Interpreters in C++, ah.
-
-This C++ program obviously doesn't do much and would only impress your local bean-counter, so let's improve it by doing the next logical step up: a simple command line program.
+I'll show the config struct and skeleton of the build function below. The enum for the config type is probably overkill, but for most other cli programs, the enum would definitley have more entries:
 
 ```
-#include <iostream>
 
-int main(int argc, char* argv[]) {
-    for (int i = 0; i < argc; i++) {
-        std::cout << argv[i] << "\n";
-    }
+typedef enum {
+        Shell,
+        File
+} Config_t;
+
+typedef struct {
+        Config_t type;
+        char *file_path;
+        int num_args;
+} Config ;
+
+Config config_build(int argc, char *argv[]) {
+        Config config;
+        switch(argc) {
+                case 1:
+                        printf("%s\n", argv[1]);
+                        config = (Config) {
+                                ???
+                        };
+                        return config;
+                default:
+                        printf("No or too many arguments\n");
+                        exit(1);
+        }
+}
+
+void run() {
+        // do stuff
 }
 ```
 
@@ -123,88 +150,106 @@ I would argue an interpreter is ***exactly*** that.
 
 If someone told me "Code." I would write an interpreter.
 
-Before we do that, I'm going begrudgingly take a java-esc approach to this project because for some reason I was told semi-recently that I don't know what object-oriented programming is, so hopefully this will remedy that.
-Let's change our CLI program into one giant object, but no fancy object graphs or dependency injection yet:
+This interpreter will act similarly to something like sqlite, where its behavior will depend on whether the user wants a shell or to run the program from a file. We can begin this by modifying the switch statements in config_build():
 
 ```
-#include "cade_lang.h"
+	switch(argc) {
+		case 1:
+			printf("Running Shell...\n");
+			config = (Config){ 
+				Shell, 
+				NULL, 
+				argc 
+			};
+			return config;		
+		case 2:
+			printf("Running File with file path: %s\n", argv[1]);
+			config = (Config) {
+				File,
+				argv[1],
+				argc
+			};
+			return config;
+		default:
+			printf("Usage: idk [script]\n");
+			exit(1);
+			break;
+	}
+```
 
-int main(int argc, char *argv[]) {
-        Cade_Lang cade_lang(argc, argv);
-        return 0;
+and modify the run function to reflect our config with two functions we'll fill out:
+void run(Config config) {
+        if (config.type == Shell) {
+                run_shell();
+        }
+        else {
+                run_file(config.file_path);
+        }
 }
 
-```
-
-Cade_Lang (the very original name of my interpreter) will take the two command line arguments in its constructor. Here we will declare some of its members and process the arguments:
-```
-class Cade_Lang {
-        public:
-                Cade_Lang(int argc, char *argv[]);
-        private:
-                int argc;
-                std::vector<std::string> args;
-```
-
-Cade_Lang will act similarly to something like sqlite, where its behavior will depend on whether the user wants a shell or to run the program from a file.
-We will do this in Cade_Lang's constructor:
+Run file will simply slurp up the file contents into a string and return it for when we build a lexer:
 
 ```
-Cade_Lang::Cade_Lang(int argc, char *argv[]) {
-        this->argc = argc;
-        for (int i=0; i < argc; i++) {
-                args.push_back(argv[i]);
-        }
+char *run_file(char *file_path) {
+        FILE *file = fopen(file_path, "rb");
+            if (!file) return NULL;
 
-        switch(argc) {
-                case 1:
-                        std::cout << "Usage: Cade_Lang [script]" << "\n";
-                        exit(1);
-                        break;
-                case 2:
-                        run_file(args[1]);
-                        break;
-                default:
-                        run_shell();
-                        break;
-        }
+            fseek(file, 0, SEEK_END);
+            long size = ftell(file);
+            rewind(file);
+
+            char *buffer = malloc(size + 1); // +1 for null terminator
+            if (!buffer) {
+                fclose(file);
+                return NULL;
+            }
+
+            fread(buffer, 1, size, file);
+            buffer[size] = '\0'; // Null-terminate the string
+            fclose(file);
+            return buffer;
 }
 ```
 
 Now, we can proceed to make what every person who doesn't go outside much loves: a shell.
 
-run_file and run_shell are member functions that will call some standard library functions for user input and then call a run() function where we will do the meat of the interpreter.
-
-But to get a basic shell going, we can do run_shell() like this:
-
 ```
-void Cade_Lang::run_shell() {
+void run_shell() {
 
-        bool is_running = true;
+        bool should_quit = false;
+        char input[20];
 
-        std::string input;
+        while (!should_quit) {
+                printf("cade_lang> ");
 
-        while(is_running) {
-                std::cout << "cade_lang> ";
+                if (fgets(input, sizeof(input), stdin) == NULL) {
+                    break;
+                }
 
-                std::getline(std::cin,input);
+                size_t len = strlen(input);
+                if (len > 0 && input[len - 1] == '\n') {
+                    input[len - 1] = '\0';
+                }
 
-                if(input.empty()) continue;
-                if(input == ".quit") is_running = false;
+                if (strlen(input) == 0) continue;
 
-                run(input);
+                if (strcmp(input, ".quit") == 0) {
+                    should_quit = true;
+                    continue;
+                }
+
         }
 }
 ```
 
-Here we do an infinite loop where we print the shell prompt and get whatever the user puts, while allowing the user to do the sqlite-esc .quit command to break the loop.
-And with that, we have a shell just like you'd see in bash or in sqlite:
+
+Here we do an infinite loop where we print the shell prompt and get whatever the user puts, while allowing the user to do the sqlite-esc .quit command to break the loop. And with that, we have a shell just like you'd see in bash or in sqlite:
 
 ```
 cade_lang>
 ```
 
-Our shell can't do anything besides quit for now, but we'll do the next step in making an interpreter by splitting up the inputted string into ***tokens*** that we can then parse it with some sort of binary tree in order to do meaningful, grammatical things
+Our shell can't do anything besides quit for now, but we'll do the next step in making an interpreter by splitting up the inputted string into ***tokens*** with a tokenizer, which will form the real meat of the interpreter.
 
 
 [Check out part 2 here](cadethornton.com/posts/interpreters_p2)

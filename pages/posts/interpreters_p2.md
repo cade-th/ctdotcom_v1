@@ -1,16 +1,19 @@
 ---
-title: A Tourist's Guide to Interpreters Part II, Dynamic Arrays & Lexer
+title: A Tourist's Guide to C Interpreters Part II, Dynamic Arrays & Lexer
 date: 2025-05-22
-description: Making an interpreter in C++
-tag: C++
+description: Making an interpreter in C
+tag: C
 author: Cade Thornton
 ---
 
-### 
+### Oh the Pains of C
 
-One reason interpreters are great is because of test-driven development. TTD was something I never really got into during my degree or in my free time because things like graphics engines or many university projects don't really lend themselves towards the paradigm. However, an interpreter is ideally 100% deterministic, so TTD is *the best* place to both learn and demonstrate the approach. 
+[Repository for this project](https://github.com/cade-th/interpreter_c)
 
-I'll begin by doing something I don't really see very often with programming projects, which is write a failing test that covers literally the entirety of our project. It'll be mostly pseudocode for now for reason's I'll explain in a second:
+
+A terrific reason interpreters are great because of test-driven development. TTD was something I never really got into during my degree or in my free time because things like graphics engines or many university projects don't really lend themselves towards the paradigm. However, an interpreter is ideally 100% deterministic, so TTD is *the best* place to both learn and demonstrate the approach. 
+
+I'll begin by doing something I don't really see very often with programming projects, which is write a failing test that covers literally the entirety of the project. It'll be mostly pseudocode for now for reason's I'll explain in a second:
 (I'm also using the Unity C testing framework, a very nice library consiting of just a single .c and header file that gives us some nice macros printing info about the tests)
 ```
 void test_interpreter(void) {
@@ -36,7 +39,7 @@ So, our interpreter's structure is essentially exactly how this test function re
 
 At first glance, it seems we could move on now to constructing our lexer and trying to get some tokens made, but C is a what I call a fun langauge. 
 
-This does not work:
+The following does not work:
 ```
 Tokens tokens[] = lex(&lexer);
 ```
@@ -125,13 +128,48 @@ typedef struct {
         int read_position,
         char *ch;
 } Lexer;
+Lexer Lexer_new(char *input);
+Token *lex(Lexer *self);
 ```
+
+Below will be the test we'll try to make our lexer pass. It'll just be simple tokens for now:
+```
+void lexer_basic_test(void) {
+    char* input = "=+(){},;";
+
+    int expected_tokens_size = 9;
+    Token expected_tokens[] = {
+        {ASSIGN, "="},
+        {PLUS, "+"},
+        {LET, "("},
+        {LET, ")"},
+        {LET, "{"},
+        {LET, "}"},
+        {COMMA, ","},
+        {SEMICOLON, ";"},
+        {Eof, ""}
+    };
+
+    Lexer lexer = Lexer_new(input);
+    Token *result = lex(&lexer);
+
+    for (int i=0; i < expected_tokens_size; i++) {
+        TEST_ASSERT(result[i].type == expected_tokens[i].type);        
+        TEST_ASSERT(result[i].literal == expected_tokens[i].literal);        
+    }
+
+}
+```
+Not terrific error handling yet, but I'm considering adding a result type to be returned from each lexer function to mimic that error monad pattern in functional programming.
+
+
+
 
 
 
 
 
 ... [part 3](cadethornton.com/posts/interpreters_p3)
-[Repository for this project](https://github.com/cade-th/interpreter_c)
+
 
 

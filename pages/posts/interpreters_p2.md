@@ -1,41 +1,16 @@
 ---
-title: A Tourist's Guide to C Interpreters Part II, Dynamic Arrays & Lexer
+title: A Tourist's Guide to 6502 Assemblers in C Part II, Dynamic Arrays & Lexer
 date: 2025-05-22
-description: Making an interpreter in C
+description: Making an assembler in C
 tag: C
 author: Cade Thornton
 ---
 
 ### Oh the Pains of C
 
-[Repository for this project](https://github.com/cade-th/interpreter_c)
+[Repository for this project](https://github.com/cade-th/assembler_c)
 
-
-A terrific reason interpreters are great because of test-driven development. TTD was something I never really got into during my degree or in my free time because things like graphics engines or many university projects don't really lend themselves towards the paradigm. However, an interpreter is ideally 100% deterministic, so TTD is *the best* place to both learn and demonstrate the approach. 
-
-I'll begin by doing something I don't really see very often with programming projects, which is write a failing test that covers literally the entirety of the project. It'll be mostly pseudocode for now for reason's I'll explain in a second:
-(I'm also using the Unity C testing framework, a very nice library consiting of just a single .c and header file that gives us some nice macros printing info about the tests)
-```
-void test_interpreter(void) {
-        char *input = "1 + 1 * 2;"; 
-        Lexer lexer = lexer_new(input);
-        Tokens tokens[] = lex(&lexer);
-
-        Parser parser = parser_new(tokens);
-        AST tree = parse(&parser);
-
-        char *output = evaluate(tree);
-        assert(output, "4");
-}
-
-int main(void) {
-        UNITY_BEGIN();
-        RUN_TEST(test_interpreter):
-        return UNITY_END();
-}
-```
-
-So, our interpreter's structure is essentially exactly how this test function reads: we get the user input as a string from the shell/file (done in part 1), feed this into the lexer that outputs an array of tokens, feed that array into the parser which then builds a tree that we evaluate into something like an interger. Pretty simple. We're just doing basic arithmetic because this test serves to only illustrate the interpreter architecture. Further tests for the lexer/parser/evaluator will be more feature rich and specific.
+A terrific reason assemblers are great because of test-driven development. TTD was something I never really got into during my degree or in my free time because things like graphics engines or many university projects don't really lend themselves towards the paradigm. However, an assembler is ideally 100% deterministic, so TTD is *the best* place to both learn and demonstrate the approach. 
 
 At first glance, it seems we could move on now to constructing our lexer and trying to get some tokens made, but C is a what I call a fun langauge. 
 
@@ -169,7 +144,7 @@ Not terrific error handling yet, but I'm considering adding a result type to be 
 
 
 
-... [part 3](cadethornton.com/posts/interpreters_p3)
+... [part 3](cadethornton.com/posts/assemblers_p3)
 
 
 

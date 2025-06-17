@@ -4,7 +4,7 @@
         <description><![CDATA[Cade Thornton]]></description>
         <link>https://cadethornton.com</link>
         <generator>RSS for Node</generator>
-        <lastBuildDate>Mon, 26 May 2025 23:13:15 GMT</lastBuildDate>
+        <lastBuildDate>Tue, 17 Jun 2025 18:26:36 GMT</lastBuildDate>
         <atom:link href="https://cadethornton.com" rel="self" type="application/rss+xml"/>
         <item>
             <title><![CDATA[A Bluetooth Keyboard, How and Why Part I]]></title>
@@ -25,13 +25,31 @@
             <pubDate>Tue, 01 Apr 2025 00:00:00 GMT</pubDate>
         </item>
         <item>
-            <title><![CDATA[Error Propagation in C]]></title>
+            <title><![CDATA[Error Driven Development]]></title>
             <description><![CDATA[Propagating errors in C]]></description>
             <link>/posts/error_in_c</link>
             <guid isPermaLink="true">/posts/error_in_c</guid>
             <category><![CDATA[C]]></category>
             <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
             <pubDate>Sat, 29 Mar 2025 00:00:00 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[A Tourist's Guide to 6502 Assemblers Part I]]></title>
+            <description><![CDATA[Making an 6502 assembler in C]]></description>
+            <link>/posts/first_post</link>
+            <guid isPermaLink="true">/posts/first_post</guid>
+            <category><![CDATA[C]]></category>
+            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
+            <pubDate>Sat, 29 Mar 2025 00:00:00 GMT</pubDate>
+        </item>
+        <item>
+            <title><![CDATA[A Tourist's Guide to 6502 Assemblers in C Part II, Dynamic Arrays & Lexer]]></title>
+            <description><![CDATA[Making an assembler in C]]></description>
+            <link>/posts/interpreters_p2</link>
+            <guid isPermaLink="true">/posts/interpreters_p2</guid>
+            <category><![CDATA[C]]></category>
+            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
+            <pubDate>Thu, 22 May 2025 00:00:00 GMT</pubDate>
         </item>
         <item>
             <title><![CDATA[Making an Entire Linux Distro Part 1]]></title>
@@ -43,15 +61,6 @@
             <pubDate>Sun, 06 Apr 2025 00:00:00 GMT</pubDate>
         </item>
         <item>
-            <title><![CDATA[A Tourist's Guide to C Interpreters Part II, Dynamic Arrays & Lexer]]></title>
-            <description><![CDATA[Making an interpreter in C]]></description>
-            <link>/posts/interpreters_p2</link>
-            <guid isPermaLink="true">/posts/interpreters_p2</guid>
-            <category><![CDATA[C]]></category>
-            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
-            <pubDate>Thu, 22 May 2025 00:00:00 GMT</pubDate>
-        </item>
-        <item>
             <title><![CDATA[Serial Protocols in System Verilog Part II]]></title>
             <description><![CDATA[Implementing serial protocols in system verilog]]></description>
             <link>/posts/system_verilog_p2</link>
@@ -59,15 +68,6 @@
             <category><![CDATA[HDL]]></category>
             <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
             <pubDate>Tue, 01 Apr 2025 00:00:00 GMT</pubDate>
-        </item>
-        <item>
-            <title><![CDATA[A Tourist's Guide to C Interpreters Part I]]></title>
-            <description><![CDATA[Making an interpreter in C]]></description>
-            <link>/posts/first_post</link>
-            <guid isPermaLink="true">/posts/first_post</guid>
-            <category><![CDATA[C]]></category>
-            <dc:creator><![CDATA[Cade Thornton]]></dc:creator>
-            <pubDate>Sat, 29 Mar 2025 00:00:00 GMT</pubDate>
         </item>
         <item>
             <title><![CDATA[Serial Protocols in System Verilog Part I]]></title>

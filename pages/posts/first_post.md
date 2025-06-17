@@ -1,12 +1,12 @@
 ---
-title: A Tourist's Guide to C Interpreters Part I
+title: A Tourist's Guide to 6502 Assemblers Part I
 date: 2025-03-29
-description: Making an interpreter in C
+description: Making an 6502 assembler in C
 tag: C
 author: Cade Thornton
 ---
 
-[Repository for this project](https://github.com/cade-th/interpreter_c)
+[Repository for this project](https://github.com/cade-th/assembler_c)
 
 Recently, I had the pleasure of seeing a great movie called "The Menu". A fascinating blend of thrill/suspense, satire, and philosophy, this film was well worth its hour and a half-ish runtime
 
@@ -83,57 +83,32 @@ and this in C:
 
 Tangents about computer science education aside, if told to "Code." I would start with the standard C "hello world". After, of course, undergoing the hideous nightmare of setting up C/C++ build systems and reading an entire book about CMake so I can write code for my meta-build system to generate my make-based build system that generates my final, insanity-based build system that runs shell commands that call Clang or gcc in whatever way with which monopolistic hardware vendors want to slam unsuspecting victims with patent trolls so that not even the biggest company in the world can build a cellular modem - wait, what was I talking about again?
 
-A tourist's guide to Interpreters in C, ah.
+A tourist's guide to Assemblers in C, ah.
 
-This C program obviously doesn't do much and would only impress your local bean-counter, so let's improve it by doing the next logical step up: a simple command line program.
+This C program obviously doesn't do much and would only impress your local bean-counter, so let's improve it by doing the next logical step up: parsing some kind of input. But what should our input be? 
 
-A tip I picked up from The Rust Book is to create and parse a config struct for the programs command-line arguments like below, and abstract the programs main functionality into a separate function:
+When I first wrote this post, I was dead set on making an interpreter in c. Howevever, after I finished writing the lexer and moved on to parsing some source code, I realized the recursive descent pratt parsing is far, far from simple. Therefore, I had a better idea. 
 
-```
-#include <stdio.h>
-
-void main(int argc, char* argv[]) {
-       Config config = config_build(argc,argv);
-       run(config);
-}
-```
-
-I'll show the config struct and skeleton of the build function below. The enum for the config type is probably overkill, but for most other cli programs, the enum would definitley have more entries:
+I have a set of C utilities I use in all my projects on my github, and one of those utilities is a function to read any file into a character array which I will demonstrate below:
 
 ```
-
-typedef enum {
-        Shell,
-        File
-} Config_t;
-
 typedef struct {
-        Config_t type;
-        char *file_path;
-        int num_args;
-} Config ;
+    char *data;
+    u32 len;
+    bool is_valid;
+} File;
 
-Config config_build(int argc, char *argv[]) {
-        Config config;
-        switch(argc) {
-                case 1:
-                        printf("%s\n", argv[1]);
-                        config = (Config) {
-                                ???
-                        };
-                        return config;
-                default:
-                        printf("No or too many arguments\n");
-                        exit(1);
-        }
-}
+int main() {
+        char *file_path = "../test.cade";
+                File source_code = io_file_read(file_path);		
 
-void run() {
-        // do stuff
+                if (!source_code.is_valid) {
+                        return 1;
+                }
 }
 ```
 
-There. Instead of printing a string to the console, our program now prints to the console whatever you enter as a command line argument.
+There. Instead of printing a string to the console, our program now sets some file we input into a character literal that we can parse to our heart's content.
 But what we have here is really still about equivalent to Tyler's Bullshit, so how could we take this further?
 
 Well, usually at this point, a lot of people start writing graphics engines with something like SDL or raylib because some visual output is a much more appealing sign of progress than printing stuff.
@@ -146,114 +121,22 @@ The next logical evolution taught in most CS courses would be a REPL (read, exec
 
 But even that won't use many programming concepts for long. What we really need is a CLI program that we could write from the bottom up, on the spot, that encapsulates a number of programming concepts while also being something you see at any standard software company. 
 
-I would argue an interpreter is ***exactly*** that.
+I would argue an assembler is ***exactly*** that.
 
-If someone told me "Code." I would write an interpreter.
+If someone told me "Code." I would write an assembler.
 
-This interpreter will act similarly to something like sqlite, where its behavior will depend on whether the user wants a shell or to run the program from a file. We can begin this by modifying the switch statements in config_build():
+An interpreter can be pretty simple, and everyone knows javascript was written in seven days, but assemblers are nicer because you can skip a lot of annoying parsing required by high level languages and just output a binary that corresponds much closer to the source code.
 
-```
-	switch(argc) {
-		case 1:
-			printf("Running Shell...\n");
-			config = (Config){ 
-				Shell, 
-				NULL, 
-				argc 
-			};
-			return config;		
-		case 2:
-			printf("Running File with file path: %s\n", argv[1]);
-			config = (Config) {
-				File,
-				argv[1],
-				argc
-			};
-			return config;
-		default:
-			printf("Usage: idk [script]\n");
-			exit(1);
-			break;
-	}
-```
+At first glance, one might think to write an assembler for something industry standard language like ARM or (lol) x86, or even maybe RISC V, but CPU design has progressed so incredibly rapidly in the past thirty years (in addition to those ISA's being proprietary) that this is laughably infeasible. So we need to target something simpler. Fans of Ben Eater probably already know where I'm going with this now. 
 
-and modify the run function to reflect our config with two functions we'll fill out:
-void run(Config config) {
-        if (config.type == Shell) {
-                run_shell();
-        }
-        else {
-                run_file(config.file_path);
-        }
-}
+Introducing the 6502: or the chip that built Apple, Atari, Etc:
 
-Run file will simply slurp up the file contents into a string and return it for when we build a lexer:
-
-```
-char *run_file(char *file_path) {
-        FILE *file = fopen(file_path, "rb");
-            if (!file) return NULL;
-
-            fseek(file, 0, SEEK_END);
-            long size = ftell(file);
-            rewind(file);
-
-            char *buffer = malloc(size + 1); // +1 for null terminator
-            if (!buffer) {
-                fclose(file);
-                return NULL;
-            }
-
-            fread(buffer, 1, size, file);
-            buffer[size] = '\0'; // Null-terminate the string
-            fclose(file);
-            return buffer;
-}
-```
-
-Now, we can proceed to make what every person who doesn't go outside much loves: a shell.
-
-```
-void run_shell() {
-
-        bool should_quit = false;
-        char input[20];
-
-        while (!should_quit) {
-                printf("cade_lang> ");
-
-                if (fgets(input, sizeof(input), stdin) == NULL) {
-                    break;
-                }
-
-                size_t len = strlen(input);
-                if (len > 0 && input[len - 1] == '\n') {
-                    input[len - 1] = '\0';
-                }
-
-                if (strlen(input) == 0) continue;
-
-                if (strcmp(input, ".quit") == 0) {
-                    should_quit = true;
-                    continue;
-                }
-
-        }
-}
-```
+![6502](../../resources/6502.jpg)
 
 
-Here we do an infinite loop where we print the shell prompt and get whatever the user puts, while allowing the user to do the sqlite-esc .quit command to break the loop. And with that, we have a shell just like you'd see in bash or in sqlite:
+The 6502 is nice because it has only 5 (yes 5!) registers to worry about, and only about 50ish instructions to implement, compared to god knows how many instructions and registers ARM, x86, and RISC-V have.
 
-```
-cade_lang>
-```
+Now that we have our source code in a giant character array, we can proceed to making the first part of the assembler: the lexer:
 
-Our shell can't do anything besides quit for now, but we'll do the next step in making an interpreter by splitting up the inputted string into ***tokens*** with a tokenizer, which will form the real meat of the interpreter.
-
-
-[Check out part 2 here](cadethornton.com/posts/interpreters_p2)
-
-
-
+[Check out part 2 here](cadethornton.com/posts/assemblers_p2)
 
